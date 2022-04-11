@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InventoryApplication.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace InventoryApplication
 {
-    public class CategoriesRepository
+    public class CategoriesRepository : ICategoriesRepository
     {
         // Lets pretend this actually does something fancy, like using Entity Framework to get data from a database.
         private readonly List<Category> _categoryDAOs = new()

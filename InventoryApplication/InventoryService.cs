@@ -1,7 +1,27 @@
-﻿namespace InventoryApplication
+﻿using InventoryApplication.Interfaces;
+
+namespace InventoryApplication
 {
     public class InventoryService
     {
+        private readonly ICategoriesRepository _categoriesRepository;
+        private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IInventoryDataAccess _inventoryDataAccess;
+
+        public InventoryService(ICategoriesRepository categoriesRepository, IDateTimeProvider dateTimeProvider, IInventoryDataAccess inventoryDataAccess)
+        {
+            _categoriesRepository = categoriesRepository;
+            _dateTimeProvider = dateTimeProvider;
+            _inventoryDataAccess = inventoryDataAccess;
+        }
+
+        public InventoryService()
+        {
+            _categoriesRepository = new CategoriesRepository();
+            _dateTimeProvider = new DateTimeProvider();
+            _inventoryDataAccess = new InventoryDataAccessProxy();
+        }
+
         public bool TryAddItem(string name, string description, string category, double price, DateTime saleStart)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -19,8 +39,7 @@
                 return false;
             }
 
-            var categoriesRepository = new CategoriesRepository();
-            var categoryFromDatabase = categoriesRepository.GetByName(category);
+            var categoryFromDatabase = _categoriesRepository.GetByName(category);
             if (categoryFromDatabase is null)
             {
                 return false;
@@ -31,7 +50,7 @@
                 return false;
             }
 
-            var now = DateTime.Now;
+            var now = _dateTimeProvider.GetCurrentDate();
             if (saleStart < now.Date)
             {
                 return false;
@@ -55,7 +74,7 @@
                 }
             }
 
-            InventoryDataAccess.AddInventory(new InventoryItem
+            _inventoryDataAccess.AddInventory(new InventoryItem
             {
                 Id = 0,
                 Name = name,
