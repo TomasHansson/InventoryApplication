@@ -56,7 +56,7 @@ namespace AfryAnalytics.Capture.Services
                     return new RevenueCalculationResult { Outcome = Outcome.Error, Message = $"No WindSpeed-Locations were found close enough to the given sites location ({site.Longitude}:{site.Latitude})." };
                 }
 
-                var outputRatio = windSpeedsForLocation.AverageWindSpeed / site.WindSpeedAtMaxCapacity;
+                var outputRatio = windSpeedsForLocation.AverageWindSpeed >= site.WindSpeedAtMaxCapacity ? 1 : windSpeedsForLocation.AverageWindSpeed / site.WindSpeedAtMaxCapacity;
                 var output = site.MaxCapacityMw * site.Availability * outputRatio;
                 var revenue = output * market.EurosPerMw;
                 return new RevenueCalculationResult { Outcome = Outcome.Success, Result = revenue };
